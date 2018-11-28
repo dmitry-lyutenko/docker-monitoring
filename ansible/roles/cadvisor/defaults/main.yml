@@ -1,0 +1,8 @@
+---
+# defaults file for cadvisor
+docker_compose: "/usr/local/bin/docker-compose"
+dst_dir: "/cadvisor"
+cadvisor_image: "cadvisor:latest"
+docker_hub_port: 65222
+docker_hub: "docker-test.xlab.jes.space:{{ docker_hub_port }}"
+cadvisor_ext_port: 9324

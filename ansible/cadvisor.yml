@@ -1,0 +1,7 @@
+---
+- name: Install Cadvisor
+  hosts: all
+  become: true
+
+  roles:
+    - cadvisor

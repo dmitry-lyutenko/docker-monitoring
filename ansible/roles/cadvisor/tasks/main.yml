@@ -1,0 +1,38 @@
+---
+# tasks file for cadvisor
+- name: Check that docker-compose avaible
+  shell: "{{ docker_compose }} version"
+  register: output
+  ignore_errors: true
+
+- name: debug out
+  debug:
+    msg: "Error: docker-compose not fount at {{ docker_compose }}"
+  when: output['rc'] is defined and output['rc'] != 0
+
+- name: debug out
+  debug:
+    msg: "{{ docker_hub }}"
+
+- name: Log into docker-hub
+  shell: "docker login -u {{ docker_user }} -p {{ docker_password }} {{ docker_hub }}"
+  when: docker_user is defined and docker_password is defined
+
+- name: create dir
+  file:
+    name: "{{ dst_dir }}"
+    state: directory
+    mode: 0755    
+
+- name: Copy config
+  template:
+    src: cadvisor.yml.j2
+    dest: "{{ dst_dir }}/cadvisor.yml"
+
+- name: Start cadvisor container
+  shell: "{{ docker_compose }}  -f {{ dst_dir }}/cadvisor.yml up -d"
+  when: output['rc'] is defined and output['rc'] == 0
+
+- name: Logout from docker-hub
+  shell: "docker logout {{ docker_hub }}"
+  when: docker_user is defined and docker_password is defined
